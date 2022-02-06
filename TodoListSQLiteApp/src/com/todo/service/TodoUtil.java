@@ -7,195 +7,148 @@ import com.todo.dao.TodoList;
 
 public class TodoUtil {
 	
-	public static void createItem(TodoList l) {
+	public static void createItem(TodoList l) { 
 		
-		String title, desc, category, due_date;
+		String title, desc, category, date;
 		Scanner sc = new Scanner(System.in);
 		
 		System.out.print("\n" + "[Create item]\n" + "Category > ");
+		category=sc.nextLine();
 		
-		category = sc.next();
-		
-		System.out.print("Title >");
-		title = sc.next();
+		System.out.print("Title > ");
+		title = sc.nextLine();
 		if (l.isDuplicate(title)) {
 			System.out.println("Duplicate titles not allowed!");
 			return;
 		}
 		
 		System.out.print("Description >");
-		sc.nextLine();
 		desc = sc.nextLine();
 		
-		System.out.print("Due date >");
-		due_date = sc.next();
+		System.out.print("Due Date >");
+		date = sc.nextLine();
 		
-		TodoItem t = new TodoItem(category,title, desc, due_date);
-		t.setIs_completed(0);
-		System.out.println();
-		if(l.addItem(t)>0) {
-			System.out.println("Item added~");
-		}
+		TodoItem t = new TodoItem(title, desc, category,date);
+		if(l.addItem(t)>0)
+			System.out.println("Item added!");
 	}
-
+	
 	public static void deleteItem(TodoList l) {
-		int no; //번호 입력
-		int val=0; //item 번호가 말이 되는지 확인용
-		String yn; //yes or no 
-		
+		int index;
+		String des; //decision
 		Scanner sc = new Scanner(System.in);
 		
-		System.out.print("\n" + "[Delete Item]\n" + "The item number to remove > ");
+		System.out.print("\n" + "[Delete Item]\n" + "Number of the item to remove > ");
+		index = sc.nextInt();
 		
-		no = sc.nextInt();
-		
-		for(TodoItem item : l.getList()) {
-			if(item.getId()==no) {
-				System.out.println(item.toString());
-				val=1;
-				break;
-			}
-		}
-		
-		if (val==1) {
-			System.out.print("Delete this item?(y/n) > ");
-			yn=sc.next();
-			
-			if(yn.equals("y")) {
-				if(l.deleteItem(no)>0) {
-					System.out.println();
-					System.out.println("Item Deleted~");
-				}
-			}
-		}
-		
-		else {
-			System.out.println("Invalid number!");
+		if(l.getItem(index)==null) {
+			System.out.println("Non-existing item!");
 			return;
 		}
 		
+		System.out.println(l.getItem(index).toString());
+		
+		System.out.print("Delete this item? (y/n)");
+		des=sc.next();
+		if(des.equals("y")) {
+			if(l.deleteItem(index)>0)
+				System.out.println("The item is deleted!");
+		}
+		
 	}
-
+	
 	public static void updateItem(TodoList l) {
-		int no; //수정할 item 번호 입력
-		int val=0; //item 번호가 말이 되는지 확인용
-		String new_title, new_category, new_desc, new_due_date; //새 카테고리, 설명, 마감일자 
+		int index;
 		Scanner sc = new Scanner(System.in);
 		
-		System.out.print("\n" + "[Edit Item]\n" + "The item number to update > ");
+		System.out.print("\n" + "[Edit Item]\n" + "Number of the item to update > ");
+		index = sc.nextInt();
 		
-		no = sc.nextInt();
-		
-		for(TodoItem item : l.getList()) {
-			if(item.getId()==no) {
-				System.out.println(item.toString());
-				val=1;
-				break;
-			}
-		}
-		
-		if (val==1) {
-			System.out.print("Title of the new item > ");
-			new_title = sc.next().trim();
-			if (l.isDuplicate(new_title)) {
-				System.out.println("Existing title!");
-				return;
-			}
-		
-			System.out.print("New Category > ");
-			sc.nextLine();
-			new_category = sc.next();
-		
-			System.out.print("New Description > ");
-			sc.nextLine();
-			new_desc = sc.nextLine().trim();
-		
-			System.out.print("New Due date >");
-			new_due_date = sc.next();
-			
-			TodoItem t = new TodoItem(new_category, new_title, new_desc, new_due_date);
-			t.setId(no);
-			t.setIs_completed(0);
-			if(l.updateItem(t)>0) {
-				System.out.println();
-				System.out.println("Item updated~");
-			}
-		}
-		
-		else {
-			System.out.println("Invalid number!");
+		if(l.getItem(index)==null) {
+			System.out.println("Non-existing item!");
 			return;
 		}
+		
+		sc.nextLine();
+		System.out.print("Title of the new item > ");
+		String new_title = sc.nextLine();
+		
+		if (l.isDuplicate(new_title)) {
+			System.out.println("Existing title!");
+			return;
+		} 
+		
+		System.out.print("Category of the new item > ");
+		String new_category = sc.nextLine();
+		
+		System.out.print("Description of the new item > ");
+		String new_desc = sc.nextLine();
+		
+		System.out.print("Due date of the new item > ");
+		String new_due_date = sc.nextLine();
+		
+		TodoItem t = new TodoItem(new_title, new_desc, new_category, new_due_date);
+		t.setId(index);
+		
+		if(l.updateItem(t)>0)
+			System.out.println("The item is updated!");
 	}
 
-	public static void listAll(TodoList l) {
-		int num=l.getCount();
-		System.out.println("\n[Item List] , " + num + " items\n");
+	public static void listAll(TodoList l) { 
+		System.out.print("[Item List, ");
+		System.out.println("a total of " + l.getCount() + " items]");
 		for (TodoItem item : l.getList()) {
 			System.out.println(item.toString());
 		}
 	}
 	
-	public static void listAll(TodoList l, String orderby, int ordering) {
-		int num=l.getCount();
-		System.out.println("\n[Item List] , " + num + " items\n");
+	public static void listAll(TodoList l, String orderby, int ordering) { 
+		System.out.print("[Item List, ");
+		System.out.println("a total of " + l.getCount() + " items]");
 		for(TodoItem item : l.getOrderedList(orderby, ordering)) {
 			System.out.println(item.toString());
 		}
-	} 
+	}
 	
-	public static void KeyWordFind(TodoList l, String keyword) {
-		int count=0;
+	public static void findList(TodoList l, String keyword) { 
+		int cnt=0;
 		for (TodoItem item : l.getList(keyword)) {
 			System.out.println(item.toString());
-			count++;
+			cnt++;
 		}
-		System.out.println();
-		System.out.println("Found " + count + " item");
-
+		System.out.println("\nFound a total of " + cnt + " items");
 	}
 	
-	public static void KeyWordFindCate(TodoList l, String cate) {
-		int count=0;
-		for (TodoItem item : l.getListCategory(cate)) {
+	public static void findCateList(TodoList l, String keyword) { 
+		int cnt=0;
+		for (TodoItem item : l.getListCategory(keyword)) {
 			System.out.println(item.toString());
-			count++;
+			cnt++;
 		}
-		System.out.println();
-		System.out.println("Found " + count + " item");
+		System.out.println("\nFound a total of " + cnt + " items");
 	}
 	
-	public static void PrintCat(TodoList l) {
-		int count=0;
+	public static void listCateAll(TodoList l) { 
+		int cnt=0;
 		for(String item : l.getCategories()) {
 			System.out.print(item + " ");
-			count++;
+			cnt++;
 		}
-		System.out.println();
-		System.out.println("A total of " + count + " categories"); 
+		System.out.println("\n\nFound a total of " + cnt + " categories");
 	}
 	
-	public static void CompleteItem(TodoList l, int num) {
-		for (TodoItem item : l.getList()) {
-			if(item.getId()==num) {
-				item.setIs_completed(1);
-				if(l.completeItem(item)>0) {
-					System.out.println();
-					System.out.println("Item marked completed~");
-				}
-				break;
-			}
-		}
+	public static void completeItem(TodoList l, String keyword) { 
+		if(l.completeItem(Integer.parseInt(keyword))>0)
+			System.out.println("The item is marked completed!");
 	}
 	
-	public static void PrintCompletedItem(TodoList l) {
-		int count=0;
-		for (TodoItem item : l.getListCompleted()) {
+	public static void listAll(TodoList l, int comp) { 
+		int cnt=0;
+		for(TodoItem item : l.getList(comp)) {
 			System.out.println(item.toString());
-			count++;
+			cnt++;
 		}
-		System.out.println();
-		System.out.println("Found " + count + " items");
+		System.out.println("\nA total of " + cnt + " items are completed!");
 	}
-
+	
 }

@@ -12,7 +12,6 @@ import java.util.*;
 import com.todo.service.DbConnect;
 
 public class TodoList {
-	private List<TodoItem> list;
 	Connection conn;
 	
 	public TodoList() {

@@ -55,6 +55,7 @@ public class TodoUtil {
 				System.out.println("The item is deleted!");
 		}
 		
+		
 	}
 	
 	public static void updateItem(TodoList l) {
@@ -92,6 +93,8 @@ public class TodoUtil {
 		
 		if(l.updateItem(t)>0)
 			System.out.println("The item is updated!");
+		
+
 	}
 
 	public static void listAll(TodoList l) { 
